@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db, onAuthStateChanged, doc, getDoc, setDoc, FirebaseUser, googleProvider, signInWithPopup, signOut } from '../firebase';
 import { UserProfile } from '../types';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface AuthContextType {
   user: FirebaseUser | null;
@@ -82,4 +83,34 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+};
+
+export const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user && pathname !== '/login') {
+        router.push('/login');
+      } else if (user && pathname === '/login') {
+        router.push('/');
+      }
+    }
+  }, [user, loading, pathname, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
+  if (!user && pathname !== '/login') {
+    return null;
+  }
+
+  return <>{children}</>;
 };

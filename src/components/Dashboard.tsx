@@ -12,7 +12,7 @@ import {
   PlusCircle,
   Archive
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { format } from 'date-fns';
 
 const StatCard: React.FC<{ 
@@ -151,7 +151,7 @@ export const Dashboard: React.FC = () => {
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-slate-100 flex items-center justify-between">
             <h3 className="font-bold text-slate-900">Script Terbaru</h3>
-            <Link to="/archive" className="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+            <Link href="/archive" className="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
               Lihat Semua <ArrowRight size={14} />
             </Link>
           </div>
@@ -169,7 +169,7 @@ export const Dashboard: React.FC = () => {
                 {recentScripts.map((script) => (
                   <tr key={script.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4">
-                      <Link to={`/script/${script.id}`} className="font-medium text-slate-900 hover:text-indigo-600">
+                      <Link href={`/script/${script.id}`} className="font-medium text-slate-900 hover:text-indigo-600">
                         {script.judul}
                       </Link>
                     </td>
@@ -201,7 +201,7 @@ export const Dashboard: React.FC = () => {
           <h3 className="font-bold text-slate-900 mb-6">Aktivitas Cepat</h3>
           <div className="space-y-4">
             <Link 
-              to="/submit" 
+              href="/submit" 
               className="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50 transition-all group"
             >
               <div className="p-3 rounded-lg bg-indigo-100 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
@@ -213,7 +213,7 @@ export const Dashboard: React.FC = () => {
               </div>
             </Link>
             <Link 
-              to="/archive" 
+              href="/archive" 
               className="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50 transition-all group"
             >
               <div className="p-3 rounded-lg bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
 import { db, doc, getDoc, updateDoc, collection, getDocs, query, orderBy } from '../firebase';
 import { useAuth } from './AuthGuard';
 import { Script, ScriptSection, STATUS_COLORS } from '../types';
@@ -25,7 +25,7 @@ import { saveAs } from 'file-saver';
 
 export const ScriptDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const router = useRouter();
   const { profile } = useAuth();
   const [script, setScript] = useState<Script | null>(null);
   const [sections, setSections] = useState<ScriptSection[]>([]);
@@ -47,7 +47,7 @@ export const ScriptDetail: React.FC = () => {
           setSections(sectionsData);
         } else {
           toast.error('Script tidak ditemukan');
-          navigate('/archive');
+          router.push('/archive');
         }
       } catch (error) {
         console.error('Error fetching script:', error);
@@ -57,7 +57,7 @@ export const ScriptDetail: React.FC = () => {
     };
 
     fetchScript();
-  }, [id, navigate]);
+  }, [id, router]);
 
   const handleStatusUpdate = async (newStatus: 'approved' | 'rejected', reason?: string) => {
     if (!id || !script) return;
@@ -173,7 +173,7 @@ export const ScriptDetail: React.FC = () => {
     <div className="space-y-8 pb-20">
       <div className="flex items-center justify-between">
         <button 
-          onClick={() => navigate('/archive')}
+          onClick={() => router.push('/archive')}
           className="flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium transition-colors"
         >
           <ArrowLeft size={20} />

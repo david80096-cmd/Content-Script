@@ -13,7 +13,7 @@ import {
   FileSpreadsheet,
   FileText as FileIcon
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { format } from 'date-fns';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
@@ -174,7 +174,7 @@ export const ScriptArchive: React.FC = () => {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Link 
-                          to={`/script/${script.id}`}
+                          href={`/script/${script.id}`}
                           className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
                           title="View Details"
                         >

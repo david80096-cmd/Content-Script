@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useAuth } from './AuthGuard';
 import { 
   LayoutDashboard, 
@@ -28,7 +29,7 @@ const SidebarItem: React.FC<{
   onClick?: () => void;
 }> = ({ to, icon, label, active, onClick }) => (
   <Link
-    to={to}
+    href={to}
     onClick={onClick}
     className={cn(
       "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
@@ -44,7 +45,7 @@ const SidebarItem: React.FC<{
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { profile, logout } = useAuth();
-  const location = useLocation();
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   const menuItems = [
@@ -79,7 +80,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <SidebarItem 
               key={item.to} 
               {...item} 
-              active={location.pathname === item.to} 
+              active={pathname === item.to} 
             />
           ))}
         </nav>
@@ -146,7 +147,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <SidebarItem 
               key={item.to} 
               {...item} 
-              active={location.pathname === item.to}
+              active={pathname === item.to}
               onClick={() => setIsMobileMenuOpen(false)}
             />
           ))}

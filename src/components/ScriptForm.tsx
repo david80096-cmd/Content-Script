@@ -3,12 +3,12 @@ import { db, collection, addDoc, serverTimestamp, writeBatch, doc } from '../fir
 import { useAuth } from './AuthGuard';
 import { STRUKTUR_OPTIONS, ScriptSection } from '../types';
 import { Plus, Trash2, Save, Send, ChevronUp, ChevronDown } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 
 export const ScriptForm: React.FC = () => {
   const { profile } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [judul, setJudul] = useState('');
   const [brand, setBrand] = useState('');
   const [linkReferensi, setLinkReferensi] = useState('');
@@ -78,7 +78,7 @@ export const ScriptForm: React.FC = () => {
       await batch.commit();
       
       toast.success(status === 'pending' ? 'Script berhasil diajukan!' : 'Script disimpan sebagai draft');
-      navigate('/archive');
+      router.push('/archive');
     } catch (error) {
       console.error('Error submitting script:', error);
       toast.error('Gagal menyimpan script');
