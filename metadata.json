@@ -1,0 +1,5 @@
+{
+  "name": "AI Studio Apps – Content Script Management",
+  "description": "Platform internal untuk tim konten untuk mengelola pengajuan, review, dan arsip script konten dalam satu sistem terpusat.",
+  "requestFramePermissions": []
+}

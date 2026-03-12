@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    // Collection: users
+    // Fields: userId, name, email, photoURL, role, createdAt
+    //
+    // Collection: scripts
+    // Fields: scriptId, judul, brand, creatorId, creatorName, linkReferensi, tanggal, status, createdAt
+    //
+    // Subcollection: scripts/{scriptId}/sections
+    // Fields: sectionId, struktur, footage, scriptTeks, keterangan, order
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "david80096@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isScriptCreator(scriptId) {
+      return isAuthenticated() && request.auth.uid == get(/databases/$(database)/documents/scripts/$(scriptId)).data.creatorId;
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['userId', 'name', 'email', 'role', 'createdAt']) &&
+             data.userId is string &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.email is string &&
+             data.role in ['admin', 'creator'];
+    }
+
+    function isValidScript(data) {
+      return data.keys().hasAll(['judul', 'brand', 'creatorId', 'status', 'createdAt']) &&
+             data.judul is string && data.judul.size() > 0 && data.judul.size() < 200 &&
+             data.brand is string && data.brand.size() > 0 && data.brand.size() < 100 &&
+             data.status in ['draft', 'pending', 'approved', 'rejected', 'published'];
+    }
+
+    function isValidSection(data) {
+      return data.keys().hasAll(['struktur', 'scriptTeks', 'order']) &&
+             data.struktur is string &&
+             data.scriptTeks is string &&
+             data.order is int;
+    }
+
+    // Rules
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow create: if isAuthenticated() && isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role == 'creator';
+      allow update: if isAuthenticated() && (isAdmin() || (isOwner(userId) && request.resource.data.role == resource.data.role)) && isValidUser(request.resource.data);
+    }
+
+    match /scripts/{scriptId} {
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.creatorId || isAdmin());
+      allow create: if isAuthenticated() && request.resource.data.creatorId == request.auth.uid && isValidScript(request.resource.data);
+      allow update: if isAuthenticated() && (isAdmin() || (request.auth.uid == resource.data.creatorId && resource.data.status in ['draft', 'rejected'])) && isValidScript(request.resource.data);
+      allow delete: if isAuthenticated() && (isAdmin() || (request.auth.uid == resource.data.creatorId && resource.data.status == 'draft'));
+
+      match /sections/{sectionId} {
+        allow read: if isAuthenticated() && (get(/databases/$(database)/documents/scripts/$(scriptId)).data.creatorId == request.auth.uid || isAdmin());
+        allow write: if isAuthenticated() && (get(/databases/$(database)/documents/scripts/$(scriptId)).data.creatorId == request.auth.uid || isAdmin()) && isValidSection(request.resource.data);
+      }
+    }
+  }
+}

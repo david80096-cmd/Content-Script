@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "creator"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "email", "role"]
+    },
+    "Script": {
+      "title": "Script",
+      "description": "Content script submission",
+      "type": "object",
+      "properties": {
+        "scriptId": { "type": "string" },
+        "judul": { "type": "string" },
+        "brand": { "type": "string" },
+        "creatorId": { "type": "string" },
+        "creatorName": { "type": "string" },
+        "linkReferensi": { "type": "string" },
+        "tanggal": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["draft", "pending", "approved", "rejected", "published"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["judul", "brand", "creatorId", "status"]
+    },
+    "Section": {
+      "title": "Section",
+      "description": "A section within a script",
+      "type": "object",
+      "properties": {
+        "sectionId": { "type": "string" },
+        "struktur": { "type": "string" },
+        "footage": { "type": "string" },
+        "scriptTeks": { "type": "string" },
+        "keterangan": { "type": "string" },
+        "order": { "type": "integer" }
+      },
+      "required": ["struktur", "scriptTeks", "order"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of user profiles"
+    },
+    "/scripts/{scriptId}": {
+      "schema": "Script",
+      "description": "Collection of content scripts"
+    },
+    "/scripts/{scriptId}/sections/{sectionId}": {
+      "schema": "Section",
+      "description": "Subcollection of script sections"
+    }
+  }
+}
